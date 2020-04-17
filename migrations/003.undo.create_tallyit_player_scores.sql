@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS tallyit_player_scores;
