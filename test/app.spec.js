@@ -6,4 +6,9 @@ describe('App', () => {
             .get('/')
             .expect(200, 'Hello, world!')
     });
+    it(`GET /api/* responds with 200 with JSON object {"ok": true}`, () => {
+        return supertest(app)
+            .get('/api/*')
+            .expect(200, {"ok": true})
+    });
 });
