@@ -12,7 +12,7 @@ gamesRouter
     const { game_name, group_id } = req.body;
     const newGame = { game_name };
 
-    if (newGame.game_name === null) {
+    if (newGame.game_name == null) {
       return res.status(400).json({
         error: { message: 'Missing game_name in request body'}
       });
@@ -33,7 +33,6 @@ gamesRouter
           .json(GamesService.serializeGame(game));
       })
       .catch(next);
-
   });
 
 module.exports = gamesRouter;

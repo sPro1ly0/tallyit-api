@@ -5,6 +5,7 @@ const fixtures = require('./tallyit-fixtures');
 
 describe.only('Games Endpoints', function () {
   let db;
+  // eslint-disable-next-line no-unused-vars
   const { testGroups, testGames, testPlayerScores } = fixtures.makeTallyitFixtures();
 
   before('make knex instance', () => {
@@ -38,6 +39,7 @@ describe.only('Games Endpoints', function () {
   });
 
   describe('POST /api/games', () => {
+
     beforeEach('insert groups', () => {
       return db
         .into('tallyit_groups')
@@ -79,6 +81,43 @@ describe.only('Games Endpoints', function () {
               expect(row.body.group_id).to.eql(testGroup.id);
             })
         );
+    });
+
+    it('responds 400 and error message when game_name is missing', () => {
+      const testGroup = testGroups[0];
+      const newGame = {
+        game_name: 'Test Game',
+        group_id: testGroup.id
+      };
+        
+      delete newGame['game_name'];
+
+      return supertest(app)
+        .post('/api/games')
+        .send(newGame)
+        .expect(400, {
+          error: { message: 'Missing game_name in request body' }
+        });
+    });
+
+    context('Given an XSS attack on posting a game', () => {
+      it('removes XSS attack content', () => {
+        const testGroup = testGroups[0];
+        const {
+          maliciousGame,
+          expectedGame
+        } = fixtures.makeMaliciousGame(testGroup);
+      
+        return supertest(app)
+          .post('/api/games')
+          .send(maliciousGame)
+          .expect(201)
+          .expect(res => {
+            expect(res.body.game_name).to.eql(expectedGame.game_name);
+            expect(res.body.location).to.eql(expectedGame.location);
+          });
+      });
+
     });
 
   });

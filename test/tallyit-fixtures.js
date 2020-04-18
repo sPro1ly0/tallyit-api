@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 function makeTestGroups () {
   return [
     {
@@ -156,9 +157,25 @@ function makeTallyitFixtures() {
   return { testGroups, testGames, testPlayerScores };
 }
   
-  
+function makeMaliciousGame(group) {
+  const maliciousGame = {
+    id: 123,
+    game_name: 'Naughty naughty very naughty <script>alert("xss");</script>',
+    date_created:  new Date().toISOString(),
+    group_id: group.id,
+  };
+  const expectedGame = {
+    ...maliciousGame,
+    game_name: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;'
+  };
+  return {
+    maliciousGame,
+    expectedGame
+  }
+}
   
   
 module.exports = { 
-  makeTallyitFixtures
+  makeTallyitFixtures,
+  makeMaliciousGame
 };
