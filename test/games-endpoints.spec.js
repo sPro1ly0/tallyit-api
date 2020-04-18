@@ -222,7 +222,7 @@ describe.only('Games Endpoints', function () {
 
   });
 
-  describe.only('GET /api/games/:game_id/player-scores', () => {
+  describe('GET /api/games/:game_id/player-scores', () => {
     context('Given no games in database', () => {
       beforeEach('insert groups', () => 
         fixtures.seedGroups(db, testGroups)
