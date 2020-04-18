@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const express = require('express');
 const path = require('path');
 const GamesService = require('./games-service');
@@ -40,6 +41,17 @@ gamesRouter
   .all(checkGameExists)
   .get((req, res) => {
     res.json(GamesService.serializeGame(res.game));
+  })
+  .delete((req, res, next) => {
+    GamesService.deleteGame(
+      req.app.get('db'),
+      req.params.game_id
+    )
+      .then(() => {
+        res.status(204).end();
+        logger.info(`Game with id ${req.params.game_id} deleted.`);
+      })
+      .catch(next);
   });
 
 async function checkGameExists (req, res, next) {
@@ -48,7 +60,7 @@ async function checkGameExists (req, res, next) {
       req.app.get('db'),
       req.params.game_id
     );
-  
+    // console.log(game);
     if (!game) {
       return res.status(404).json({
         error: { message: 'Game does not exist' }

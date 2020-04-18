@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 const knex = require('knex');
 const app = require('../src/app');
@@ -120,7 +121,7 @@ describe.only('Games Endpoints', function () {
 
   });
 
-  describe.only('GET /api/games/:game_id', () => {
+  describe('GET /api/games/:game_id', () => {
     context('Given no games in database', () => {
       beforeEach('insert groups', () => {
         fixtures.seedGroups(db, testGroups);
@@ -186,6 +187,38 @@ describe.only('Games Endpoints', function () {
     });
   });
 
+  describe.only('DELETE /api/games/:game_id', () => {
+    context('Given no games in database', () => {
+      beforeEach('insert groups', () => {
+        fixtures.seedGroups(db, testGroups);
+      });
 
+      it('responds with 404 for game that does not exist', () => {
+        const gameId = 123;
+        return supertest(app)
+          .get(`/api/games/${gameId}`)
+          .expect(404, {
+            error: { message: 'Game does not exist'}
+          });
+      });  
+    });
 
+    context('Given games in database', () => {
+      beforeEach('insert games', () =>
+        fixtures.seedTallyitTables(
+          db,
+          testGroups,
+          testGames
+        )
+      );
+
+      it('responds with 204 and deletes the game', () => {
+        const deleteId = 1;
+        return supertest(app)
+          .delete(`/api/games/${deleteId}`)
+          .expect(204);
+      });
+    });
+
+  });
 });

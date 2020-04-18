@@ -27,6 +27,12 @@ const GamesService = {
       .where('g.id', id)
       .first();
   },
+  deleteGame(db, id) {
+    return db
+      .from('tallyit_games')
+      .where({ id })
+      .delete();
+  },
   serializeGame(game) {
     return {
       id: game.id,
