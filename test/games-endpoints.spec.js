@@ -41,9 +41,7 @@ describe.only('Games Endpoints', function () {
   describe('POST /api/games', () => {
 
     beforeEach('insert groups', () => {
-      return db
-        .into('tallyit_groups')
-        .insert(testGroups);
+      fixtures.seedGroups(db, testGroups);
     });
 
     it('responds with 201, creates a new game, and returns new game', () => {
@@ -125,9 +123,7 @@ describe.only('Games Endpoints', function () {
   describe.only('GET /api/games/:game_id', () => {
     context('Given no games in database', () => {
       beforeEach('insert groups', () => {
-        return db
-          .into('tallyit_groups')
-          .insert(testGroups);
+        fixtures.seedGroups(db, testGroups);
       });
 
       it('responds with 404 for game that does not exist', () => {
@@ -136,6 +132,55 @@ describe.only('Games Endpoints', function () {
           .get(`/api/games/${gameId}`)
           .expect(404, {
             error: { message: 'Game does not exist'}
+          });
+      });
+    });
+
+    context('Given games are in database', () => {
+      beforeEach('insert games', () => 
+        fixtures.seedTallyitTables(
+          db,
+          testGroups,
+          testGames,
+          testPlayerScores
+        )
+      );
+
+      it('responds with 200 and given matching game id', () => {
+        const gameId = 1;
+        const expectedGame = fixtures.makeExpectedGame(
+          testGroups,
+          testGames[gameId - 1]
+        );
+
+        return supertest(app)
+          .get(`/api/games/${gameId}`)
+          .expect(200, expectedGame);
+      });
+    });
+
+    context('Given an XSS attack on game', () => {
+      const testGroup = testGroups[0];
+      const {
+        maliciousGame,
+        expectedGame
+      } = fixtures.makeMaliciousGame(testGroup);
+
+      beforeEach('insert malicious game', () => {
+        return fixtures.seedMaliciousGame(
+          db,
+          testGroup,
+          maliciousGame
+        );
+      });
+
+      it('removes XSS attack content', () => {
+        return supertest(app)
+          .get(`/api/games/${maliciousGame.id}`)
+          .expect(200)
+          .expect(res => {
+            // console.log(res.body);
+            expect(res.body.game_name).to.eql(expectedGame.game_name);
           });
       });
     });

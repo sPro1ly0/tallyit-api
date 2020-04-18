@@ -156,6 +156,44 @@ function makeTallyitFixtures() {
   const testPlayerScores = makeTestPlayerScores(testGroups, testGames);
   return { testGroups, testGames, testPlayerScores };
 }
+
+function seedTallyitTables(db, groups, games, player_scores=[]) {
+  return db
+    .into('tallyit_groups')
+    .insert(groups)
+    .then(() => 
+      db
+        .into('tallyit_games')
+        .insert(games)
+    )
+    .then(() =>
+      player_scores.length && db.into('tallyit_player_scores').insert(player_scores)
+    );
+}
+
+function makeExpectedGame(groups, game) {
+  const group = groups.find(g => g.id === game.group_id);
+
+  return {
+    id: game.id,
+    game_name: game.game_name,
+    date_created: game.date_created.toISOString(),
+    group: group.group_name    
+  };
+}
+
+function seedGroups(db, groups) {
+  return db
+    .into('tallyit_groups')
+    .insert(groups)
+    .then(() => 
+      db.raw(
+        // eslint-disable-next-line quotes
+        `SELECT setval('tallyit_groups_id_seq', ?)`,
+        [groups[groups.length - 1].id]
+      )
+    );
+}
   
 function makeMaliciousGame(group) {
   const maliciousGame = {
@@ -173,9 +211,22 @@ function makeMaliciousGame(group) {
     expectedGame
   };
 }
+
+function seedMaliciousGame(db, group, game) {
+  return seedGroups(db, [group])
+    .then(() => 
+      db
+        .into('tallyit_games')
+        .insert([game])
+    );
+}
   
   
 module.exports = { 
   makeTallyitFixtures,
-  makeMaliciousGame
+  seedTallyitTables,
+  makeExpectedGame,
+  seedGroups,
+  makeMaliciousGame,
+  seedMaliciousGame
 };
