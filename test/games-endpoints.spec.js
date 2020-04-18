@@ -122,4 +122,25 @@ describe.only('Games Endpoints', function () {
 
   });
 
+  describe.only('GET /api/games/:game_id', () => {
+    context('Given no games in database', () => {
+      beforeEach('insert groups', () => {
+        return db
+          .into('tallyit_groups')
+          .insert(testGroups);
+      });
+
+      it('responds with 404 for game that does not exist', () => {
+        const gameId = 123;
+        return supertest(app)
+          .get(`/api/games/${gameId}`)
+          .expect(404, {
+            error: { message: 'Game does not exist'}
+          });
+      });
+    });
+  });
+
+
+
 });

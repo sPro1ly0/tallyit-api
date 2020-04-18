@@ -171,7 +171,7 @@ function makeMaliciousGame(group) {
   return {
     maliciousGame,
     expectedGame
-  }
+  };
 }
   
   

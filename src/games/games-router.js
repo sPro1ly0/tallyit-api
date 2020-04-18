@@ -35,4 +35,31 @@ gamesRouter
       .catch(next);
   });
 
+gamesRouter
+  .route('/:game_id')
+  .all(checkGameExists)
+  .get((req, res) => {
+    res.json(GamesService.serializeGame(res.game));
+  });
+
+async function checkGameExists (req, res, next) {
+  try {
+    const game = await GamesService.getGameById(
+      req.app.get('db'),
+      req.params.game_id
+    );
+  
+    if (!game) {
+      return res.status(404).json({
+        error: { message: 'Game does not exist' }
+      });
+    }
+  
+    res.game = game;
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = gamesRouter;
