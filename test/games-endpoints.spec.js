@@ -4,9 +4,8 @@ const knex = require('knex');
 const app = require('../src/app');
 const fixtures = require('./tallyit-fixtures');
 
-describe.only('Games Endpoints', function () {
+describe('Games Endpoints', function () {
   let db;
-  // eslint-disable-next-line no-unused-vars
   const { testGroups, testGames, testPlayerScores } = fixtures.makeTallyitFixtures();
 
   before('make knex instance', () => {
@@ -45,7 +44,7 @@ describe.only('Games Endpoints', function () {
       fixtures.seedGroups(db, testGroups)
     );
 
-    it('responds with 201, creates a new game, and returns new game', () => {
+    it('responds with 201, creates a new game, and returns new game', function() {
       this.retries(3);
       const testGroup = testGroups[0];
       const newGame = {

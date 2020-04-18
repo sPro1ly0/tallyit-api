@@ -6,6 +6,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
 const gamesRouter = require('./games/games-router');
+const playerScoresRouter = require('./player-scores/player-scores-router');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(cors());
 // });
 
 app.use('/api/games', gamesRouter);
+app.use('/api/player-scores', playerScoresRouter);
 
 app.use(function errorHandler(error, req, res, next) {
   let response;
