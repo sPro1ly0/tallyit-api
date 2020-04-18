@@ -1,7 +1,7 @@
 const xss = require('xss');
 
 const GamesService = {
-  createGame (db, newGame) {
+  createGame(db, newGame) {
     return db
       .insert(newGame)
       .into('tallyit_games')
@@ -10,7 +10,7 @@ const GamesService = {
         return rows[0];
       });
   },
-  serializeGame (game) {
+  serializeGame(game) {
     return {
       id: game.id,
       game_name: xss(game.game_name),

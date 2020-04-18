@@ -27,7 +27,6 @@ gamesRouter
     )
       .then(game => {
         logger.info(`Game with id ${game.id} created.`);
-        
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${game.id}`))
@@ -36,3 +35,5 @@ gamesRouter
       .catch(next);
 
   });
+
+module.exports = gamesRouter;
