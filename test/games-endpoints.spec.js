@@ -41,9 +41,9 @@ describe.only('Games Endpoints', function () {
 
   describe('POST /api/games', () => {
 
-    beforeEach('insert groups', () => {
-      fixtures.seedGroups(db, testGroups);
-    });
+    beforeEach('insert groups', () =>
+      fixtures.seedGroups(db, testGroups)
+    );
 
     it('responds with 201, creates a new game, and returns new game', () => {
       this.retries(3);
@@ -123,9 +123,9 @@ describe.only('Games Endpoints', function () {
 
   describe('GET /api/games/:game_id', () => {
     context('Given no games in database', () => {
-      beforeEach('insert groups', () => {
-        fixtures.seedGroups(db, testGroups);
-      });
+      beforeEach('insert groups', () =>
+        fixtures.seedGroups(db, testGroups)
+      );
 
       it('responds with 404 for game that does not exist', () => {
         const gameId = 123;
@@ -187,11 +187,11 @@ describe.only('Games Endpoints', function () {
     });
   });
 
-  describe.only('DELETE /api/games/:game_id', () => {
+  describe('DELETE /api/games/:game_id', () => {
     context('Given no games in database', () => {
-      beforeEach('insert groups', () => {
-        fixtures.seedGroups(db, testGroups);
-      });
+      beforeEach('insert groups', () =>
+        fixtures.seedGroups(db, testGroups)
+      );
 
       it('responds with 404 for game that does not exist', () => {
         const gameId = 123;
@@ -220,5 +220,46 @@ describe.only('Games Endpoints', function () {
       });
     });
 
+  });
+
+  describe.only('GET /api/games/:game_id/player-scores', () => {
+    context('Given no games in database', () => {
+      beforeEach('insert groups', () => 
+        fixtures.seedGroups(db, testGroups)
+      );
+
+      it('responds with 404 for game that does not exist', () => {
+        const gameId = 123;
+        return supertest(app)
+          .get(`/api/games/${gameId}/player-scores`)
+          .expect(404, {
+            error: { message: 'Game does not exist'}
+          });
+      });
+    });
+
+    context('Given games with player scores in database', () => {
+      beforeEach('insert games', () =>
+        fixtures.seedTallyitTables(
+          db,
+          testGroups,
+          testGames,
+          testPlayerScores 
+        )
+      );
+
+      it('responds 200 and given matching game id with player scores', () => {
+        const gameId = 1;
+        const expectedPlayerScores = fixtures.makeExpectedPlayerScores(
+          testGames,
+          gameId,
+          testPlayerScores
+        );
+        console.log(expectedPlayerScores);
+        return supertest(app)
+          .get(`/api/games/${gameId}/player-scores`)
+          .expect(200, expectedPlayerScores);
+      });
+    });
   });
 });

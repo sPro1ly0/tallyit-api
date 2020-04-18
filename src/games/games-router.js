@@ -54,6 +54,20 @@ gamesRouter
       .catch(next);
   });
 
+gamesRouter
+  .route('/:game_id/player-scores')
+  .all(checkGameExists)
+  .get((req, res, next) => {
+    GamesService.getPlayerScoresForGame(
+      req.app.get('db'),
+      req.params.game_id
+    )
+      .then(playerScores => {
+        res.json(playerScores.map(GamesService.serializePlayerScore));
+      })
+      .catch(next);
+  });
+
 async function checkGameExists (req, res, next) {
   try {
     const game = await GamesService.getGameById(

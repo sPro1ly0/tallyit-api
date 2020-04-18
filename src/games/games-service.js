@@ -33,12 +33,43 @@ const GamesService = {
       .where({ id })
       .delete();
   },
+  getPlayerScoresForGame(db, game_id) {
+    return db
+      .from('tallyit_player_scores AS ps')
+      .select(
+        'ps.id',
+        'ps.player_name',
+        'ps.score',
+        'ps.game_id',
+        'ps.date_created',
+        'ps.date_modified',
+        'g.game_name AS game'
+      )
+      .where('ps.game_id', game_id)
+      .leftJoin(
+        'tallyit_games AS g',
+        'ps.game_id',
+        'g.id'
+      )
+      .groupBy('ps.id', 'g.id');
+  },
   serializeGame(game) {
     return {
       id: game.id,
       game_name: xss(game.game_name),
       date_created: new Date(game.date_created),
       group: game.group
+    };
+  },
+  serializePlayerScore(playerScore) {
+    return {
+      id: playerScore.id,
+      player_name: xss(playerScore.player_name),
+      score: Number(playerScore.score),
+      game_id: playerScore.game_id,
+      date_created: new Date(playerScore.date_created),
+      date_modified: playerScore.date_modified || null,
+      game: playerScore.game
     };
   }
 };
