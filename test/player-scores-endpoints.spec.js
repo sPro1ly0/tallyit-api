@@ -160,4 +160,40 @@ describe.only('Player-Scores Endpoints', () => {
 
   });
 
+  describe.only('DELETE /api/player-scores/:player_id', () => {
+    context('Given no players in database', () => {
+      beforeEach(() =>
+        fixtures.seedGroups(db, testGroups)
+      );
+
+      it('responds 404 when player does not exist', () => {
+        const playerId = 321;
+        return supertest(app)
+          .delete(`/api/player-scores/${playerId}`)
+          .expect(404, {
+            error: { message: 'Player does not exist' }
+          });
+      });
+    });
+
+    context('Given player in database', () => {
+      beforeEach(() =>
+        fixtures.seedTallyitTables(
+          db,
+          testGroups,
+          testGames,
+          testPlayerScores
+        ) 
+      );
+
+      it('responds 204 and deletes the player', () => {
+        const deleteId = 1;
+
+        return supertest(app)
+          .delete(`/api/player-scores/${deleteId}`)
+          .expect(204);
+      });
+    });
+  });
+
 });
