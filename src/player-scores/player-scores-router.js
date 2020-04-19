@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 // post new player and score, yes
 // delete player and score, yes
-// patch/put players and scores
+// patch scores, yes
 // already using games endpoint to get player scores per game, yes
 const express = require('express');
 const path = require('path');
