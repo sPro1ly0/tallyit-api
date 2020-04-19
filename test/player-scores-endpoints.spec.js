@@ -160,7 +160,7 @@ describe.only('Player-Scores Endpoints', () => {
 
   });
 
-  describe.only('DELETE /api/player-scores/:player_id', () => {
+  describe('DELETE /api/player-scores/:player_id', () => {
     context('Given no players in database', () => {
       beforeEach(() =>
         fixtures.seedGroups(db, testGroups)

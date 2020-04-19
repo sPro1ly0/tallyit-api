@@ -34,6 +34,12 @@ const PlayerScoresService = {
       .where('ps.id', id)
       .first();
   },
+  updatePlayerScore(db, id, newScore) { // can only update score, player_name isn't editable on client side
+    return db
+      .from('tallyit_player_scores')
+      .where({ id })
+      .update(newScore);
+  },
   deletePlayer(db, id) {
     return db
       .from('tallyit_player_scores')

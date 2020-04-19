@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars */
 // post new player and score, yes
 // delete player and score, yes
-// patch players and scores
+// patch/put players and scores
 // already using games endpoint to get player scores per game, yes
 const express = require('express');
 const path = require('path');
 const PlayerScoresService = require('./player-scores-service');
 
 const playerScoresRouter = express.Router();
-const jsonParser = express.json();
+const jsonParser = express.json(); // only parses json
 const logger = require('../logger');
 
 playerScoresRouter
@@ -41,6 +41,23 @@ playerScoresRouter
       })
       .catch(next);
 
+  })
+  .patch(jsonParser, (req, res, next) => {
+    // expecting an array
+    const playerScores = req.body;
+    playerScores.forEach((ps) => {
+      ps.date_modified = new Date();
+
+      PlayerScoresService.updatePlayerScore(
+        req.app.get('db'),
+        ps.id,
+        ps
+      )
+        .then(() => {
+          res.status(204).end();
+        })
+        .catch(next);
+    });
   });
 
 playerScoresRouter
