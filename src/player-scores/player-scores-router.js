@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 // post new player and score, yes
-// delete player and score
+// delete player and score, yes
 // patch players and scores
 // already using games endpoint to get player scores per game, yes
 const express = require('express');
@@ -41,5 +42,40 @@ playerScoresRouter
       .catch(next);
 
   });
+
+playerScoresRouter
+  .route('/:player_id')
+  .all(checkPlayerExists)
+  .delete((req, res, next) => {
+    PlayerScoresService.deletePlayer(
+      req.app.get('db'),
+      req.params.player_id
+    )
+      .then(() => {
+        res.status(204).end();
+        logger.info(`Player with id ${req.params.player_id} deleted.`);
+      })
+      .catch(next);
+  });
+
+async function checkPlayerExists (req, res, next) {
+  try {
+    const player = await PlayerScoresService.getById(
+      req.app.get('db'),
+      req.params.player_id
+    );
+      // console.log(player);
+    if (!player) {
+      return res.status(404).json({
+        error: { message: 'Player does not exist' }
+      });
+    }
+    
+    res.player = player;
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
 
 module.exports = playerScoresRouter;

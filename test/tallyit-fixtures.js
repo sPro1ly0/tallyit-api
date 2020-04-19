@@ -237,6 +237,26 @@ function seedMaliciousGame(db, group, game) {
         .insert([game])
     );
 }
+
+function makeMaliciousPlayer(group, game) {
+  const maliciousPlayer = {
+    id: 321,
+    player_name: 'Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.',
+    score: 3,
+    game_id: game.id,
+    group_id: group.id,
+    date_created: new Date().toISOString()  
+  };
+  const expectedPlayer = {
+    ...maliciousPlayer,
+    player_name: 'Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.'
+  };
+
+  return {
+    maliciousPlayer,
+    expectedPlayer
+  };
+}
   
   
 module.exports = { 
@@ -246,5 +266,6 @@ module.exports = {
   makeExpectedPlayerScores,
   seedGroups,
   makeMaliciousGame,
-  seedMaliciousGame
+  seedMaliciousGame,
+  makeMaliciousPlayer
 };

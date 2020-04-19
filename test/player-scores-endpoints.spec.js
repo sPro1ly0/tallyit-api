@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 const knex = require('knex');
@@ -103,6 +104,60 @@ describe.only('Player-Scores Endpoints', () => {
         );
 
     });
+
+    it('responds 400 and error message when player_name is missing', () => {
+      const testGame = testGames[0];
+      const newPlayer = {
+        player_name: 'Bobby',
+        game_id: testGame.id
+      };
+          
+      delete newPlayer['player_name'];
+  
+      return supertest(app)
+        .post('/api/player-scores')
+        .send(newPlayer)
+        .expect(400, {
+          error: `Missing 'player_name' in request body`
+        });
+    });
+
+    it('responds 400 and error message when game_id is missing', () => {
+      const testGame = testGames[0];
+      const newPlayer = {
+        player_name: 'Bobby',
+        game_id: testGame.id
+      };
+            
+      delete newPlayer['game_id'];
+    
+      return supertest(app)
+        .post('/api/player-scores')
+        .send(newPlayer)
+        .expect(400, {
+          error: `Missing 'game_id' in request body`
+        });
+    });
+
+    context('Given an XSS attack on posting player', () => {
+      it('removes XSS attack content', () => {
+        const testGroup = testGroups[0];
+        const testGame = testGames[0];
+        const {
+          maliciousPlayer,
+          expectedPlayer
+        } = fixtures.makeMaliciousPlayer(testGroup, testGame);
+
+        return supertest(app)
+          .post('/api/player-scores')
+          .send(maliciousPlayer)
+          .expect(201)
+          .expect(res => {
+            expect(res.body.player_name).to.eql(expectedPlayer.player_name);
+          });
+      });
+    });
+
   });
 
 });

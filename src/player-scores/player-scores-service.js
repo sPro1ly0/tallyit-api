@@ -34,6 +34,12 @@ const PlayerScoresService = {
       .where('ps.id', id)
       .first();
   },
+  deletePlayer(db, id) {
+    return db
+      .from('tallyit_player_scores')
+      .where({ id })
+      .delete();
+  },
   serializePlayerScore(playerScore) {
     return {
       id: playerScore.id,
