@@ -210,6 +210,24 @@ describe.only('Player-Scores Endpoints', () => {
         );
     });
 
+    it(`responds 400 when 'id' field is missing in any player_score object`, () => {
+
+      const updateScores = [
+        { 
+          score: 123
+        }
+      ];
+      return supertest(app)
+        .patch('/api/player-scores')
+        .send(updateScores)
+        .expect(400)
+        .catch(
+          {
+            error: { message: `Request body must have 'id'`}
+          }
+        );
+    });
+
     it(`responds 400 when 'score' field is missing in any player_score object`, () => {
 
       const updateScores = [
