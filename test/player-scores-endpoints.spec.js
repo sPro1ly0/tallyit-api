@@ -160,6 +160,75 @@ describe.only('Player-Scores Endpoints', () => {
 
   });
 
+  describe.only('PATCH /api/player-scores', () => {
+    beforeEach('insert player scores into tables', () => {
+      fixtures.seedTallyitTables(
+        db,
+        testGroups,
+        testGames,
+        testPlayerScores
+      );
+    });
+
+    it('responds 204 and updates the array of scores', function() {
+      const game = testGames[0];
+      const testPlayer1 = testPlayerScores[0];
+      const testPlayer2 = testPlayerScores[1];
+
+      const updateScores = [
+        {
+          id: 1,
+          player_name: testPlayer1.player_name,
+          score: 100,
+          game_id: game.id,
+          date_modified: new Date().toISOString()
+        },
+        {
+          id: 2,
+          player_name: testPlayer2.player_name,
+          score: 99,
+          game_id: game.id,
+          date_modified: new Date().toISOString()
+        }
+      ];
+
+      const gameId = 1;
+      const expectedPlayerScores = fixtures.makeExpectedPlayerScores(
+        testGames,
+        gameId,
+        testPlayerScores
+      );
+
+      return supertest(app)
+        .patch('/api/player-scores')
+        .send(updateScores)
+        .expect(204)
+        .then(res => 
+          supertest(app)
+            .get(`/api/games/${gameId}/player-scores`)
+            .expect(expectedPlayerScores)  
+        );
+    });
+
+    it(`responds 400 when 'score' field is missing in any player_score object`, () => {
+
+      const updateScores = [
+        { 
+          id: 1
+        }
+      ];
+      return supertest(app)
+        .patch('/api/player-scores')
+        .send(updateScores)
+        .expect(400)
+        .catch(
+          {
+            error: { message: `Request body must have 'score'`}
+          }
+        );
+    });
+  });
+
   describe('DELETE /api/player-scores/:player_id', () => {
     context('Given no players in database', () => {
       beforeEach(() =>

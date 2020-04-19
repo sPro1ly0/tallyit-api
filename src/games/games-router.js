@@ -63,7 +63,7 @@ gamesRouter
       req.params.game_id
     )
       .then(playerScores => {
-        res.json(playerScores.map(GamesService.serializePlayerScore));
+        res.json(playerScores.map(ps => GamesService.serializePlayerScore(ps)));
       })
       .catch(next);
   });

@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable no-unused-vars */
 // post new player and score, yes
 // delete player and score, yes
@@ -27,7 +28,7 @@ playerScoresRouter
 
     newPlayer.group_id = group_id;
     newPlayer.date_created = new Date();
-
+    // score default is 0
     PlayerScoresService.createPlayerScore(
       req.app.get('db'),
       newPlayer
@@ -43,21 +44,44 @@ playerScoresRouter
 
   })
   .patch(jsonParser, (req, res, next) => {
-    // expecting an array
+    // expecting an array of objects due to client side user interface
+    // and player_name won't change, focusing on updates to scores
     const playerScores = req.body;
-    playerScores.forEach((ps) => {
-      ps.date_modified = new Date();
 
-      PlayerScoresService.updatePlayerScore(
-        req.app.get('db'),
-        ps.id,
-        ps
-      )
-        .then(() => {
-          res.status(204).end();
-        })
-        .catch(next);
-    });
+    for (let i = 0; i < playerScores.length; i++) {
+      try {
+        if (playerScores[i].id == null) {
+          return res.status(400).json({
+            error: { message: `Request body must have 'id'`}
+          });
+        }
+        // do not need to check if id matches an existing id in the player_scores table
+        // if id does not match, then it will be ignored
+        if (playerScores[i].score== null) {
+          return res.status(400).json({
+            error: { message: `Request body must have 'score'`}
+          });
+        }
+        
+        playerScores[i].date_modified = new Date();
+  
+        PlayerScoresService.updatePlayerScore(
+          req.app.get('db'),
+          playerScores[i].id,
+          playerScores[i]
+        )
+          .then(() => {
+            res.status(204).end();
+          })
+          .catch(next);
+
+      } catch (e) {
+        next(e);
+        break;
+      }      
+
+    }
+
   });
 
 playerScoresRouter
@@ -75,7 +99,7 @@ playerScoresRouter
       .catch(next);
   });
 
-async function checkPlayerExists (req, res, next) {
+async function checkPlayerExists(req, res, next) {
   try {
     const player = await PlayerScoresService.getById(
       req.app.get('db'),

@@ -243,7 +243,7 @@ describe('Games Endpoints', function () {
           db,
           testGroups,
           testGames,
-          testPlayerScores 
+          testPlayerScores
         )
       );
 
