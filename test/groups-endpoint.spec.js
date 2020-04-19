@@ -127,6 +127,17 @@ describe.only('Groups Endpoints', function() {
           .expect(400, { error: 'Group name must not start or end with empty spaces' });
       });
 
+      it(`responds 400 'Group name already taken' when group name isn't unique`, () => {
+        const duplicateGroup = {
+          group_name: testGroups[0].group_name
+        };
+
+        return supertest(app)
+          .post('/api/groups')
+          .send(duplicateGroup)
+          .expect(400, { error: 'Group name already taken' });
+      });
+
     });
   });
 });
