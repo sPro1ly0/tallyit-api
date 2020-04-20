@@ -8,6 +8,7 @@ const { NODE_ENV } = require('./config');
 const gamesRouter = require('./games/games-router');
 const playerScoresRouter = require('./player-scores/player-scores-router');
 const groupsRouter = require('./groups/groups-router');
+const authRouter = require('./auth/auth-router');
 
 const app = express();
 
@@ -22,19 +23,13 @@ app.use(cors());
 //     })
 // );
 
-// app.get('/', (req, res) => {
-//   res.send('Hello, world!');
-// });
-
-// app.get('/api/*', (req, res) => {
-//   res.json({ok: true});
-// });
-
 app.use('/api/games', gamesRouter);
 
 app.use('/api/player-scores', playerScoresRouter);
 
 app.use('/api/groups', groupsRouter);
+
+app.use('/api/auth', authRouter);
 
 app.use(function errorHandler(error, req, res, next) {
   let response;
