@@ -5,7 +5,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const fixtures = require('./tallyit-fixtures');
 
-describe('Player-Scores Endpoints', () => {
+describe.only('Player-Scores Endpoints', () => {
   let db;
   const { testGroups, testGames, testPlayerScores } = fixtures.makeTallyitFixtures();
 
@@ -61,6 +61,7 @@ describe('Player-Scores Endpoints', () => {
       // console.log(newPlayer);
       return supertest(app)
         .post('/api/player-scores')
+        .set('Authorization', fixtures.makeAuthHeader(testGroup))
         .send(newPlayer)
         .expect(201)
         .expect(res => {
@@ -117,6 +118,7 @@ describe('Player-Scores Endpoints', () => {
       return supertest(app)
         .post('/api/player-scores')
         .send(newPlayer)
+        .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
         .expect(400, {
           error: `Missing 'player_name' in request body`
         });
@@ -133,6 +135,7 @@ describe('Player-Scores Endpoints', () => {
     
       return supertest(app)
         .post('/api/player-scores')
+        .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
         .send(newPlayer)
         .expect(400, {
           error: `Missing 'game_id' in request body`
@@ -150,6 +153,7 @@ describe('Player-Scores Endpoints', () => {
 
         return supertest(app)
           .post('/api/player-scores')
+          .set('Authorization', fixtures.makeAuthHeader(testGroup))
           .send(maliciousPlayer)
           .expect(201)
           .expect(res => {
@@ -161,90 +165,99 @@ describe('Player-Scores Endpoints', () => {
   });
 
   describe('PATCH /api/player-scores', () => {
-    beforeEach('insert player scores into tables', () => {
-      fixtures.seedTallyitTables(
-        db,
-        testGroups,
-        testGames,
-        testPlayerScores
-      );
-    });
-
-    it('responds 204 and updates the array of scores', function() {
-      const game = testGames[0];
-      const testPlayer1 = testPlayerScores[0];
-      const testPlayer2 = testPlayerScores[1];
-
-      const updateScores = [
-        {
-          id: 1,
-          player_name: testPlayer1.player_name,
-          score: 100,
-          game_id: game.id,
-          date_modified: new Date().toISOString()
-        },
-        {
-          id: 2,
-          player_name: testPlayer2.player_name,
-          score: 99,
-          game_id: game.id,
-          date_modified: new Date().toISOString()
-        }
-      ];
-
-      const gameId = 1;
-      const expectedPlayerScores = fixtures.makeExpectedPlayerScores(
-        testGames,
-        gameId,
-        testPlayerScores
-      );
-
-      return supertest(app)
-        .patch('/api/player-scores')
-        .send(updateScores)
-        .expect(204)
-        .then(res => 
-          supertest(app)
-            .get(`/api/games/${gameId}/player-scores`)
-            .expect(expectedPlayerScores)  
+    context('given player scores are in tables', () => {
+      beforeEach('insert player scores into tables', () => {
+        fixtures.seedTallyitTables(
+          db,
+          testGroups,
+          testGames,
+          testPlayerScores
         );
-    });
-
-    it(`responds 400 when 'id' field is missing in any player_score object`, () => {
-
-      const updateScores = [
-        { 
-          score: 123
-        }
-      ];
-      return supertest(app)
-        .patch('/api/player-scores')
-        .send(updateScores)
-        .expect(400)
-        .catch(
+      });
+  
+      it('responds 204 and updates the array of scores', function() {
+        const game = testGames[0];
+        const testPlayer1 = testPlayerScores[0];
+        const testPlayer2 = testPlayerScores[1];
+  
+        const updateScores = [
           {
-            error: { message: `Request body must have 'id'`}
-          }
-        );
-    });
-
-    it(`responds 400 when 'score' field is missing in any player_score object`, () => {
-
-      const updateScores = [
-        { 
-          id: 1
-        }
-      ];
-      return supertest(app)
-        .patch('/api/player-scores')
-        .send(updateScores)
-        .expect(400)
-        .catch(
+            id: 1,
+            player_name: testPlayer1.player_name,
+            score: 100,
+            game_id: game.id,
+            date_modified: new Date().toISOString()
+          },
           {
-            error: { message: `Request body must have 'score'`}
+            id: 2,
+            player_name: testPlayer2.player_name,
+            score: 99,
+            game_id: game.id,
+            date_modified: new Date().toISOString()
           }
+        ];
+  
+        const gameId = 1;
+        const expectedPlayerScores = fixtures.makeExpectedPlayerScores(
+          testGames,
+          gameId,
+          testPlayerScores
         );
+  
+        return supertest(app)
+          .patch('/api/player-scores')
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
+          .send(updateScores)
+          .expect(204)
+          .then(res => 
+            supertest(app)
+              .get(`/api/games/${gameId}/player-scores`)
+              .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
+              .expect(expectedPlayerScores)  
+          );
+      });
+
+      it(`responds 400 when 'id' field is missing in any player_score object`, function(done) {
+        done();
+        const updateScores = [
+          { 
+            score: 123
+          }
+        ];
+  
+        return supertest(app)
+          .patch('/api/player-scores')
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
+          .send(updateScores)
+          .expect(400)
+          .catch(
+            {
+              error: { message: `Request body must have 'id'`}
+            }
+          );
+      });
+  
+      it(`responds 400 when 'score' field is missing in any player_score object`, function(done) {
+        done();
+        const updateScores = [
+          { 
+            id: 1
+          }
+        ];
+  
+        return supertest(app)
+          .patch('/api/player-scores')
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
+          .send(updateScores)
+          .expect(400)
+          .catch(
+            {
+              error: { message: `Request body must have 'score'`}
+            }
+          );
+      });
     });
+
   });
 
   describe('DELETE /api/player-scores/:player_id', () => {
@@ -257,6 +270,7 @@ describe('Player-Scores Endpoints', () => {
         const playerId = 321;
         return supertest(app)
           .delete(`/api/player-scores/${playerId}`)
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
           .expect(404, {
             error: { message: 'Player does not exist' }
           });
@@ -278,6 +292,7 @@ describe('Player-Scores Endpoints', () => {
 
         return supertest(app)
           .delete(`/api/player-scores/${deleteId}`)
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
           .expect(204);
       });
     });
