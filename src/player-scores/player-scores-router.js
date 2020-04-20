@@ -17,7 +17,7 @@ playerScoresRouter
   .route('/')
   .all(requireAuth)
   .post(jsonParser, (req, res, next) => {
-    const { player_name, game_id, group_id } = req.body;
+    const { player_name, game_id } = req.body;
     const newPlayer = { player_name, game_id };
 
     for (const [key, value] of Object.entries(newPlayer)) {
@@ -28,7 +28,7 @@ playerScoresRouter
       }
     }
 
-    newPlayer.group_id = group_id;
+    newPlayer.group_id = req.group.id;
     newPlayer.date_created = new Date();
     // score default is 0
     PlayerScoresService.createPlayerScore(

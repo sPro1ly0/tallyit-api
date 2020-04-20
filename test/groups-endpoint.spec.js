@@ -4,7 +4,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const fixtures = require('./tallyit-fixtures');
 
-describe('Groups Endpoints', function() {
+describe.only('Groups Endpoints', function() {
   let db;
   const { testGroups, testGames, testPlayerScores } = fixtures.makeTallyitFixtures();
   
@@ -36,6 +36,26 @@ describe('Groups Endpoints', function() {
              tallyit_groups
              RESTART IDENTITY CASCADE`
     );
+  });
+
+  describe('GET /api/groups', () => {
+    context('Get user/group their group_name', () => {
+      beforeEach(() =>
+        fixtures.seedGroups(db, testGroups)
+      );
+
+      const expectedGroupName = { group_name: testGroups[0].group_name };
+
+      it('responds 200 with user/group group_name', () => {
+        return supertest(app)
+          .get('/api/groups')
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
+          .expect(200, expectedGroupName)
+          .expect(res => {
+            expect(res).to.be.an('object');
+          });
+      });
+    });
   });
 
   describe('POST /api/groups', () => {
@@ -138,6 +158,49 @@ describe('Groups Endpoints', function() {
           .expect(400, { error: 'Group name already taken' });
       });
 
+    });
+  });
+
+  describe('GET /api/groups/games', () => {
+    context('Given no games in database', () => {
+      beforeEach(() => 
+        fixtures.seedGroups(db, testGroups)
+      );
+
+      it('responds 200 with empty array', () => {
+        return supertest(app)
+          .get('/api/groups/games')
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
+          .expect(200, []);
+      });
+    });
+
+    context('Given games in database', () => {
+      beforeEach('insert games', () => 
+        fixtures.seedTallyitTables(
+          db,
+          testGroups,
+          testGames,
+          testPlayerScores
+        )
+      );
+
+      it('responds with 200 and games for group', () => {
+        const allGames = testGames.map(game => 
+          fixtures.makeExpectedGame(
+            testGroups,
+            game
+          )  
+        );
+
+        const expectedGames = allGames.filter(game => game.group === testGroups[0].group_name);
+        // console.log(expectedGames);
+
+        return supertest(app)
+          .get('/api/groups/games')
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
+          .expect(200, expectedGames);
+      });
     });
   });
 });

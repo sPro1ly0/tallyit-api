@@ -12,7 +12,7 @@ gamesRouter
   .route('/')
   .all(requireAuth)
   .post(jsonParser, (req, res, next) => {
-    const { game_name, group_id } = req.body;
+    const { game_name } = req.body;
     const newGame = { game_name };
 
     if (newGame.game_name == null) {
@@ -21,7 +21,7 @@ gamesRouter
       });
     }
 
-    newGame.group_id = group_id;
+    newGame.group_id = req.group.id;
     newGame.date_created = new Date();
 
     GamesService.createGame(

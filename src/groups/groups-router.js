@@ -2,14 +2,15 @@
 const express = require('express');
 const path = require('path');
 const GroupsService = require('./groups-service');
-
+const GamesService = require('../games/games-service');
+const { requireAuth } = require('../middleware/jwt-auth');
 const groupsRouter = express.Router();
 const jsonParser = express.json(); // only parses json
 const logger = require('../logger');
 
 groupsRouter
   .route('/')
-  .get((req, res, next) => {
+  .get(requireAuth, (req, res, next) => {
     const groupId = req.group.id;
     GroupsService.getGroupName(
       req.app.get('db'),
@@ -68,14 +69,14 @@ groupsRouter
 
 groupsRouter
   .route('/games')
-  .get((req, res, next) => {
+  .get(requireAuth, (req, res, next) => {
     const groupId = req.group.id;
     GroupsService.getGamesForGroup(
       req.app.get('db'),
       groupId
     )
-      .then(groups => {
-        res.json(groups.map(gp => GroupsService.serializeGroup(gp)));
+      .then(games => {
+        res.json(games.map(game => GamesService.serializeGame(game)));
       })
       .catch(next);      
   });
