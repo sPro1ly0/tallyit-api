@@ -12,8 +12,23 @@ function requireAuth(req, res, next) {
   }
 
   try {
-    AuthService.verifyJwt(bearerToken);
-    next();
+    const payload = AuthService.verifyJwt(bearerToken);
+
+    AuthService.getGroupWithName(
+      req.app.get('db'),
+      payload.sub
+    )
+      .then(group => {
+        if (!group) {
+          return res.status(401).json({ error: 'Unauthorized request' });
+        }
+
+        req.group = group;
+        next();
+      })
+      .catch(error => {
+        next(error);
+      });
   } catch(error) {
     res.status(401).json({ error: 'Unauthorized request' });
   }

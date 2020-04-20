@@ -38,13 +38,13 @@ authRouter
 
   });
 
-authRouter
-  .post('/refresh', requireAuth, (req, res) => {
-    const sub = req.group.group_name;
-    const payload = { group_id: req.group.id };
-    res.send({
-      authToken: AuthService.createJwt(sub, payload)
-    });
-  });
+// authRouter
+//   .post('/refresh', requireAuth, (req, res) => {
+//     const sub = req.group.group_name;
+//     const payload = { group_id: req.group.id };
+//     res.send({
+//       authToken: AuthService.createJwt(sub, payload)
+//     });
+//   });
 
 module.exports = authRouter;

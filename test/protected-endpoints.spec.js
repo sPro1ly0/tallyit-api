@@ -94,11 +94,11 @@ describe.only('Protected Endpoints', function() {
     //   path: '/api/groups/games',
     //   method: supertest(app).get
     // },
-    {
-      name: 'POST /api/auth/refresh',
-      path: '/api/auth/refresh',
-      method: supertest(app).post
-    }    
+    // {
+    //   name: 'POST /api/auth/refresh',
+    //   path: '/api/auth/refresh',
+    //   method: supertest(app).post
+    // }    
   ];
 
   protectedEndpoints.forEach(endpoint => {
