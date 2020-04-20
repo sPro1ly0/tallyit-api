@@ -7,6 +7,7 @@
 const express = require('express');
 const path = require('path');
 const PlayerScoresService = require('./player-scores-service');
+const { requireAuth } = require('../middleware/jwt-auth');
 
 const playerScoresRouter = express.Router();
 const jsonParser = express.json(); // only parses json
@@ -14,6 +15,7 @@ const logger = require('../logger');
 
 playerScoresRouter
   .route('/')
+  .all(requireAuth)
   .post(jsonParser, (req, res, next) => {
     const { player_name, game_id, group_id } = req.body;
     const newPlayer = { player_name, game_id };
@@ -86,6 +88,7 @@ playerScoresRouter
 
 playerScoresRouter
   .route('/:player_id')
+  .all(requireAuth)
   .all(checkPlayerExists)
   .delete((req, res, next) => {
     PlayerScoresService.deletePlayer(

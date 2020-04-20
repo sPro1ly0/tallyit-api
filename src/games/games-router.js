@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const GamesService = require('./games-service');
+const { requireAuth } = require('../middleware/jwt-auth');
 
 const gamesRouter = express.Router();
 const jsonParser = express.json();
@@ -9,6 +10,7 @@ const logger = require('../logger');
 
 gamesRouter
   .route('/')
+  .all(requireAuth)
   .post(jsonParser, (req, res, next) => {
     const { game_name, group_id } = req.body;
     const newGame = { game_name };
@@ -38,6 +40,7 @@ gamesRouter
 
 gamesRouter
   .route('/:game_id')
+  .all(requireAuth)
   .all(checkGameExists)
   .get((req, res) => {
     res.json(GamesService.serializeGame(res.game));
@@ -56,6 +59,7 @@ gamesRouter
 
 gamesRouter
   .route('/:game_id/player-scores')
+  .all(requireAuth)
   .all(checkGameExists)
   .get((req, res, next) => {
     GamesService.getPlayerScoresForGame(

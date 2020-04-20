@@ -2,6 +2,7 @@
 const express = require('express');
 const AuthService = require('./auth-service');
 const authRouter = express.Router();
+const { requireAuth } = require('../middleware/jwt-auth');
 const jsonParser = express.json();
 
 authRouter
@@ -35,6 +36,15 @@ authRouter
       })
       .catch(next);
 
+  });
+
+authRouter
+  .post('/refresh', requireAuth, (req, res) => {
+    const sub = req.group.group_name;
+    const payload = { group_id: req.group.id };
+    res.send({
+      authToken: AuthService.createJwt(sub, payload)
+    });
   });
 
 module.exports = authRouter;

@@ -1,4 +1,6 @@
 /* eslint-disable no-useless-escape */
+const jwt = require('jsonwebtoken');
+
 function makeTestGroups () {
   return [
     {
@@ -257,6 +259,15 @@ function makeMaliciousPlayer(group, game) {
     expectedPlayer
   };
 }
+
+function makeAuthHeader(group, secret=process.env.JWT_SECRET) {
+  const token = jwt.sign({ group_id: group.id }, secret, {
+    subject: group.group_name,
+    algorithm:'HS256'
+  });
+
+  return `Bearer ${token}`;
+}
   
   
 module.exports = { 
@@ -267,5 +278,6 @@ module.exports = {
   seedGroups,
   makeMaliciousGame,
   seedMaliciousGame,
-  makeMaliciousPlayer
+  makeMaliciousPlayer,
+  makeAuthHeader
 };
