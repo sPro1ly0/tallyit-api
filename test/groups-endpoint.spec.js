@@ -4,7 +4,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const fixtures = require('./tallyit-fixtures');
 
-describe.only('Groups Endpoints', function() {
+describe('Groups Endpoints', function() {
   let db;
   const { testGroups, testGames, testPlayerScores } = fixtures.makeTallyitFixtures();
   

@@ -81,7 +81,7 @@ describe('Auth Endpoints', function() {
         process.env.JWT_SECRET, // secret
         {
           subject: testGroup.group_name,
-          // expiresIn: process.env.JWT_EXPIRY,
+          expiresIn: process.env.JWT_EXPIRY,
           algorithm: 'HS256'
         }
       );
@@ -96,31 +96,33 @@ describe('Auth Endpoints', function() {
 
   });
 
-  // describe('POST /api/auth/refresh', () => {
-  //   beforeEach('insert groups', () => {
-  //     fixtures.seedGroups(
-  //       db,
-  //       testGroups
-  //     );
-  //   });
+  describe('POST /api/auth/refresh', () => {
+    beforeEach('insert groups', () => {
+      fixtures.seedGroups(
+        db,
+        testGroups
+      );
+    });
 
-  //   it('responds 200 and JWT auth token using secret', () => {
-  //     const expectedToken = jwt.sign(
-  //       { group_id: testGroup.id },
-  //       process.env.JWT_SECRET,
-  //       {
-  //         subject: testGroup.group_name,
-  //         expiresIn: process.env.JWT_EXPIRY,
-  //         algorithm: 'HS256'
-  //       }
-  //     );
-  //     return supertest(app)
-  //       .post('/api/auth/refresh')
-  //       .set('Authorization', fixtures.makeAuthHeader(testGroup))
-  //       .expect(200, {
-  //         authToken: expectedToken
-  //       });
-  //   });
-  // });
+    it('responds 200 and JWT auth token using secret', () => {
+      const expectedToken = jwt.sign(
+        { group_id: testGroup.id },
+        process.env.JWT_SECRET,
+        {
+          subject: testGroup.group_name,
+          expiresIn: process.env.JWT_EXPIRY,
+          algorithm: 'HS256'
+        }
+      );
+
+      // console.log(expectedToken); working!
+      return supertest(app)
+        .post('/api/auth/refresh')
+        .set('Authorization', fixtures.makeAuthHeader(testGroup))
+        .expect(200, {
+          authToken: expectedToken
+        });
+    });
+  });
 
 });

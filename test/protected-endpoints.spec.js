@@ -4,7 +4,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const fixtures = require('./tallyit-fixtures');
 
-describe('Protected Endpoints', function() {
+describe.only('Protected Endpoints', function() {
   let db;
 
   const { testGroups, testGames, testPlayerScores } = fixtures.makeTallyitFixtures();
@@ -47,7 +47,8 @@ describe('Protected Endpoints', function() {
       testPlayerScores
     )
   );
-
+  
+  // 10 protected endpoint * 3 tests = 30 test passing total
   const protectedEndpoints = [
     {
       name: 'POST /api/games',
@@ -84,21 +85,21 @@ describe('Protected Endpoints', function() {
       path: '/api/player-scores/:player_id',
       method: supertest(app).delete
     },
-    // {
-    //   name: 'GET /api/groups',
-    //   path: '/api/groups',
-    //   method: supertest(app).get
-    // },
-    // {
-    //   name: 'GET /api/groups/games',
-    //   path: '/api/groups/games',
-    //   method: supertest(app).get
-    // },
-    // {
-    //   name: 'POST /api/auth/refresh',
-    //   path: '/api/auth/refresh',
-    //   method: supertest(app).post
-    // }    
+    {
+      name: 'GET /api/groups',
+      path: '/api/groups',
+      method: supertest(app).get
+    },
+    {
+      name: 'GET /api/groups/games',
+      path: '/api/groups/games',
+      method: supertest(app).get
+    },
+    {
+      name: 'POST /api/auth/refresh',
+      path: '/api/auth/refresh',
+      method: supertest(app).post
+    }    
   ];
 
   protectedEndpoints.forEach(endpoint => {
