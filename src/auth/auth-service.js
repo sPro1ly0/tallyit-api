@@ -7,10 +7,15 @@ const AuthService = {
       .where({ group_name })
       .first();
   },
-  createJWT(subject, payload) {
+  createJwt(subject, payload) {
     return jwt.sign(payload, config.JWT_SECRET, {
       subject,
       algorithm: 'HS256'
+    });
+  },
+  verifyJwt(token) {
+    return jwt.verify(token, config.JWT_SECRET, {
+      algorithms: ['HS256']
     });
   }
 };

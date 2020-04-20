@@ -29,7 +29,7 @@ authRouter
         const sub = dbGroup.group_name;
         const payload = { group_id: dbGroup.id };
         res.send({
-          authToken: AuthService.createJWT(sub, payload)
+          authToken: AuthService.createJwt(sub, payload)
         });
 
       })
