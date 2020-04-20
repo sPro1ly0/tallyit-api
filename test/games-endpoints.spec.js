@@ -4,7 +4,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const fixtures = require('./tallyit-fixtures');
 
-describe('Games Endpoints', function () {
+describe.only('Games Endpoints', function () {
   let db;
   const { testGroups, testGames, testPlayerScores } = fixtures.makeTallyitFixtures();
 
@@ -54,6 +54,7 @@ describe('Games Endpoints', function () {
       console.log(newGame);
       return supertest(app)
         .post('/api/games')
+        .set('Authorization', fixtures.makeAuthHeader(testGroup))
         .send(newGame)
         .expect(201)
         .expect(res => {
@@ -92,6 +93,7 @@ describe('Games Endpoints', function () {
 
       return supertest(app)
         .post('/api/games')
+        .set('Authorization', fixtures.makeAuthHeader(testGroup))
         .send(newGame)
         .expect(400, {
           error: { message: 'Missing game_name in request body' }
@@ -108,6 +110,7 @@ describe('Games Endpoints', function () {
       
         return supertest(app)
           .post('/api/games')
+          .set('Authorization', fixtures.makeAuthHeader(testGroup))
           .send(maliciousGame)
           .expect(201)
           .expect(res => {
@@ -130,6 +133,7 @@ describe('Games Endpoints', function () {
         const gameId = 123;
         return supertest(app)
           .get(`/api/games/${gameId}`)
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
           .expect(404, {
             error: { message: 'Game does not exist'}
           });
@@ -155,6 +159,7 @@ describe('Games Endpoints', function () {
 
         return supertest(app)
           .get(`/api/games/${gameId}`)
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
           .expect(200, expectedGame);
       });
     });
@@ -177,6 +182,7 @@ describe('Games Endpoints', function () {
       it('removes XSS attack content', () => {
         return supertest(app)
           .get(`/api/games/${maliciousGame.id}`)
+          .set('Authorization', fixtures.makeAuthHeader(testGroup))
           .expect(200)
           .expect(res => {
             // console.log(res.body);
@@ -195,7 +201,8 @@ describe('Games Endpoints', function () {
       it('responds with 404 for game that does not exist', () => {
         const gameId = 123;
         return supertest(app)
-          .get(`/api/games/${gameId}`)
+          .delete(`/api/games/${gameId}`)
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
           .expect(404, {
             error: { message: 'Game does not exist'}
           });
@@ -215,6 +222,7 @@ describe('Games Endpoints', function () {
         const deleteId = 1;
         return supertest(app)
           .delete(`/api/games/${deleteId}`)
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
           .expect(204);
       });
     });
@@ -231,6 +239,7 @@ describe('Games Endpoints', function () {
         const gameId = 123;
         return supertest(app)
           .get(`/api/games/${gameId}/player-scores`)
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
           .expect(404, {
             error: { message: 'Game does not exist'}
           });
@@ -257,6 +266,7 @@ describe('Games Endpoints', function () {
         console.log(expectedPlayerScores);
         return supertest(app)
           .get(`/api/games/${gameId}/player-scores`)
+          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
           .expect(200, expectedPlayerScores);
       });
     });
