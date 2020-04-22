@@ -184,19 +184,17 @@ function makeExpectedGame(groups, game) {
   };
 }
 
-function makeExpectedPlayerScores(games, gameId, playerScores) {
+function makeExpectedPlayerScores(gameId, playerScores) {
   const expectedPlayerScores = playerScores.filter(ps => ps.game_id === gameId);
 
   return expectedPlayerScores.map(ps => {
-    const game = games.find(g => g.id === ps.game_id);
     return {
       id: ps.id,
       player_name: ps.player_name,
       score: Number(ps.score),
       game_id: ps.game_id,
       date_created: ps.date_created.toISOString(),
-      date_modified: ps.date_modified || null,
-      game: game.game_name
+      date_modified: ps.date_modified || null
     };
   });
 }

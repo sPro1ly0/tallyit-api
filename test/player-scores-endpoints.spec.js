@@ -73,8 +73,7 @@ describe('Player-Scores Endpoints', () => {
             score: 0,
             game_id: 1,
             date_created: '2020-04-18T23:18:48.270Z',
-            date_modified: null,
-            game: 'Jenga'
+            date_modified: null
           }
           */
           expect(res.body).to.have.property('id');
@@ -84,7 +83,6 @@ describe('Player-Scores Endpoints', () => {
           const expectedDateCreated = new Date().toISOString();
           const actualDate = new Date(res.body.date_created).toISOString();
           expect(actualDate).to.eql(expectedDateCreated); // only error with matching ISOString milliseconds, .sssZ part
-          expect(res.body.game).to.eql(testGame.game_name);
           expect(res.headers.location).to.eql(`/api/player-scores/${res.body.id}`);
         })
         .expect(res => 
@@ -197,24 +195,11 @@ describe('Player-Scores Endpoints', () => {
           }
         ];
   
-        const gameId = 1;
-        const expectedPlayerScores = fixtures.makeExpectedPlayerScores(
-          testGames,
-          gameId,
-          testPlayerScores
-        );
-  
         return supertest(app)
           .patch('/api/player-scores')
           .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
           .send(updateScores)
-          .expect(204)
-          .then(res => 
-            supertest(app)
-              .get(`/api/games/${gameId}/player-scores`)
-              .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
-              .expect(expectedPlayerScores)  
-          );
+          .expect(204);
       });
 
       it(`responds 400 when 'id' field is missing in any player_score object`, function(done) {

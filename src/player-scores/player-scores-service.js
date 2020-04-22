@@ -22,15 +22,8 @@ const PlayerScoresService = {
         'ps.score',
         'ps.game_id',
         'ps.date_created',
-        'ps.date_modified',
-        'g.game_name AS game'            
+        'ps.date_modified'            
       )
-      .leftJoin(
-        'tallyit_games AS g',
-        'ps.game_id',
-        'g.id'
-      )
-      .groupBy('ps.id', 'g.id')
       .where('ps.id', id)
       .first();
   },
@@ -53,8 +46,7 @@ const PlayerScoresService = {
       score: Number(playerScore.score),
       game_id: playerScore.game_id,
       date_created: new Date(playerScore.date_created),
-      date_modified: playerScore.date_modified || null,
-      game: playerScore.game
+      date_modified: playerScore.date_modified || null
     };
   }
 };

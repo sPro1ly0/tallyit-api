@@ -259,7 +259,6 @@ describe('Games Endpoints', function () {
       it('responds 200 and given matching game id with player scores', () => {
         const gameId = 1;
         const expectedPlayerScores = fixtures.makeExpectedPlayerScores(
-          testGames,
           gameId,
           testPlayerScores
         );
