@@ -115,7 +115,6 @@ describe('Auth Endpoints', function() {
         }
       );
 
-      // console.log(expectedToken); working!
       return supertest(app)
         .post('/api/auth/refresh')
         .set('Authorization', fixtures.makeAuthHeader(testGroup))

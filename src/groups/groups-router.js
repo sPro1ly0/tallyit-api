@@ -5,8 +5,7 @@ const GroupsService = require('./groups-service');
 const GamesService = require('../games/games-service');
 const { requireAuth } = require('../middleware/jwt-auth');
 const groupsRouter = express.Router();
-const jsonParser = express.json(); // only parses json
-const logger = require('../logger');
+const jsonParser = express.json();
 
 groupsRouter
   .route('/')
@@ -57,7 +56,6 @@ groupsRouter
           newGroup
         )
           .then(group => {
-            logger.info(`Group with id ${group.id} created`);
             res
               .status(201)
               .location(path.posix.join(req.originalUrl, `/${group.id}`))

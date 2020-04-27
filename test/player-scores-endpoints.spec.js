@@ -58,14 +58,12 @@ describe('Player-Scores Endpoints', () => {
         group_id: testGroup.id
       };
 
-      // console.log(newPlayer);
       return supertest(app)
         .post('/api/player-scores')
         .set('Authorization', fixtures.makeAuthHeader(testGroup))
         .send(newPlayer)
         .expect(201)
         .expect(res => {
-        // console.log(res.body);
           /* 
           {
             id: 1,
@@ -200,26 +198,6 @@ describe('Player-Scores Endpoints', () => {
           .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
           .send(updateScores)
           .expect(204);
-      });
-
-      it(`responds 400 when 'id' field is missing in any player_score object`, function(done) {
-        done();
-        const updateScores = [
-          { 
-            score: 123
-          }
-        ];
-  
-        return supertest(app)
-          .patch('/api/player-scores')
-          .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
-          .send(updateScores)
-          .expect(400)
-          .catch(
-            {
-              error: { message: `Request body must have 'id'`}
-            }
-          );
       });
   
       it(`responds 400 when 'score' field is missing in any player_score object`, function(done) {

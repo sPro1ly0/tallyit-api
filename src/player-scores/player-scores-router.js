@@ -1,17 +1,12 @@
 /* eslint-disable quotes */
 /* eslint-disable no-unused-vars */
-// post new player and score, yes
-// delete player and score, yes
-// patch scores, yes
-// already using games endpoint to get player scores per game, yes
 const express = require('express');
 const path = require('path');
 const PlayerScoresService = require('./player-scores-service');
 const { requireAuth } = require('../middleware/jwt-auth');
 
 const playerScoresRouter = express.Router();
-const jsonParser = express.json(); // only parses json
-const logger = require('../logger');
+const jsonParser = express.json();
 
 playerScoresRouter
   .route('/')
@@ -36,7 +31,6 @@ playerScoresRouter
       newPlayer
     )
       .then(player => {
-        logger.info(`Player with id ${player.id} created`);
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `${player.id}`))
@@ -52,13 +46,9 @@ playerScoresRouter
 
     for (let i = 0; i < playerScores.length; i++) {
       try {
-        if (playerScores[i].id == null) {
-          return res.status(400).json({
-            error: { message: `Request body must have 'id'`}
-          });
-        }
         // do not need to check if id matches an existing id in the player_scores table
         // if id does not match, then it will be ignored
+        // focus on updating score property
         if (playerScores[i].score== null) {
           return res.status(400).json({
             error: { message: `Request body must have 'score'`}
@@ -97,7 +87,6 @@ playerScoresRouter
     )
       .then(() => {
         res.status(204).end();
-        logger.info(`Player with id ${req.params.player_id} deleted.`);
       })
       .catch(next);
   });
@@ -108,7 +97,7 @@ async function checkPlayerExists(req, res, next) {
       req.app.get('db'),
       req.params.player_id
     );
-      // console.log(player);
+
     if (!player) {
       return res.status(404).json({
         error: { message: 'Player does not exist' }

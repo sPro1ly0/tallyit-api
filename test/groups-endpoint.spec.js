@@ -194,7 +194,6 @@ describe('Groups Endpoints', function() {
         );
 
         const expectedGames = allGames.filter(game => game.group === testGroups[0].group_name);
-        // console.log(expectedGames);
 
         return supertest(app)
           .get('/api/groups/games')

@@ -6,7 +6,6 @@ const { requireAuth } = require('../middleware/jwt-auth');
 
 const gamesRouter = express.Router();
 const jsonParser = express.json();
-const logger = require('../logger');
 
 gamesRouter
   .route('/')
@@ -29,7 +28,6 @@ gamesRouter
       newGame
     )
       .then(game => {
-        logger.info(`Game with id ${game.id} created.`);
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${game.id}`))
@@ -52,7 +50,6 @@ gamesRouter
     )
       .then(() => {
         res.status(204).end();
-        logger.info(`Game with id ${req.params.game_id} deleted.`);
       })
       .catch(next);
   });
@@ -78,7 +75,7 @@ async function checkGameExists (req, res, next) {
       req.app.get('db'),
       req.params.game_id
     );
-    // console.log(game);
+   
     if (!game) {
       return res.status(404).json({
         error: { message: 'Game does not exist' }

@@ -51,7 +51,7 @@ describe('Games Endpoints', function () {
         game_name: 'Test Game',
         group_id: testGroup.id
       };
-      console.log(newGame);
+
       return supertest(app)
         .post('/api/games')
         .set('Authorization', fixtures.makeAuthHeader(testGroup))
@@ -185,7 +185,6 @@ describe('Games Endpoints', function () {
           .set('Authorization', fixtures.makeAuthHeader(testGroup))
           .expect(200)
           .expect(res => {
-            // console.log(res.body);
             expect(res.body.game_name).to.eql(expectedGame.game_name);
           });
       });
@@ -262,7 +261,7 @@ describe('Games Endpoints', function () {
           gameId,
           testPlayerScores
         );
-        console.log(expectedPlayerScores);
+        
         return supertest(app)
           .get(`/api/games/${gameId}/player-scores`)
           .set('Authorization', fixtures.makeAuthHeader(testGroups[0]))
