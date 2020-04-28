@@ -519,21 +519,24 @@ Request Example:
         "player_name": "Allie",
         "score": 152,
         "game_id": 26,
-        "date_created": "2020-04-27T22:52:48.466Z","date_modified": null
+        "date_created": "2020-04-27T22:52:48.466Z",
+        "date_modified": null
     },
     {
         "id": 62,
         "player_name": "Mom",
         "score": 140,
         "game_id": 26,
-        "date_created": "2020-04-27T22:53:20.378Z","date_modified": null
+        "date_created": "2020-04-27T22:53:20.378Z",
+        "date_modified": null
     },
     {
         "id": 63,
         "player_name": "Tim",
         "score": 146,
         "game_id": 26,
-        "date_created": "2020-04-27T22:53:36.998Z","date_modified": null
+        "date_created": "2020-04-27T22:53:36.998Z",
+        "date_modified": null
     }
 ]
 ```
