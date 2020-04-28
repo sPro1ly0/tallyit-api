@@ -1,6 +1,6 @@
 # Tallyit API
 
-**Name of app: Tallyiy**
+**Name of app: Tallyit**
 
 **Live app:** https://tallyit.now.sh/
 
@@ -228,8 +228,6 @@ Response:
 
 ### Games Endpoints
 
-All journals endpoints are protected and require authorization token with requests.
-
 **POST /api/games (Protected)** - Create a new game
 
 #### Success Response: 201 CREATED
@@ -385,28 +383,32 @@ URL- :game_id is the ID of the game.
         "player_name": "Hannah",
         "score": 152,
         "game_id": 26,
-        "date_created": "2020-04-27T22:52:48.466Z","date_modified": "2020-04-27T22:55:39.051Z"
+        "date_created": "2020-04-27T22:52:48.466Z",
+        "date_modified": "2020-04-27T22:55:39.051Z"
     },
     {
         "id": 61,
         "player_name": "Rey",
         "score": 154,
         "game_id": 26,
-        "date_created": "2020-04-27T22:53:05.236Z","date_modified": "2020-04-27T22:55:39.051Z"
+        "date_created": "2020-04-27T22:53:05.236Z",
+        "date_modified": "2020-04-27T22:55:39.051Z"
     },
     {
         "id": 62,
         "player_name": "Mom",
         "score": 140,
         "game_id": 26,
-        "date_created": "2020-04-27T22:53:20.378Z","date_modified": "2020-04-27T22:55:39.051Z"
+        "date_created": "2020-04-27T22:53:20.378Z",
+        "date_modified": "2020-04-27T22:55:39.051Z"
     },
     {
         "id": 63,
         "player_name": "Tom",
         "score": 146,
         "game_id": 26,
-        "date_created": "2020-04-27T22:53:36.998Z","date_modified": "2020-04-27T22:55:39.051Z"
+        "date_created": "2020-04-27T22:53:36.998Z",
+        "date_modified": "2020-04-27T22:55:39.051Z"
     }
 ]
 ```
