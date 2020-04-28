@@ -33,7 +33,7 @@ playerScoresRouter
       .then(player => {
         res
           .status(201)
-          .location(path.posix.join(req.originalUrl, `${player.id}`))
+          .location(path.posix.join(req.originalUrl, `/${player.id}`))
           .json(PlayerScoresService.serializePlayerScore(player));
       })
       .catch(next);
